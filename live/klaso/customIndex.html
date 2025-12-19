@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Klaso Live Studio</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #202124;
+      color: #ffffff;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      height: 64px;
+      background: #1a1b1d;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.4);
+    }
+
+    .top-bar h1 {
+      font-size: 18px;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    /* Main Layout */
+    .studio {
+      height: calc(100vh - 64px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    iframe {
+      width: 100%;
+      max-width: 1280px;
+      height: 100%;
+      border-radius: 12px;
+      border: none;
+      background: #000;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <div class="top-bar">
+    🎓 <h1>&nbsp;Klaso Live Teaching Studio</h1>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="studio">
+    <iframe
+      id="webrtcFrame"
+      allow="camera; microphone; display-capture">
+    </iframe>
+  </div>
+
+  <!-- CORE LOGIC (UNCHANGED) -->
+  <script type="module">
+    import { getUrlParameter } from "../js/fetch.stream.js";
+    import { getQueryParameter } from "../js/utility.js";
+
+    const iframe = document.getElementById("webrtcFrame");
+    let url = "./publish.html";
+
+    let debug = getUrlParameter("debug");
+    if (debug == null) debug = false;
+
+    url += "?debug=" + debug;
+    url += getQueryParameter("subscriberId");
+    url += getQueryParameter("subscriberCode");
+    url += getQueryParameter("streamName");
+    url += getQueryParameter("mainTrack");
+    url += getQueryParameter("token");
+    url += getQueryParameter("id");
+    url += getQueryParameter("rtmpForward");
+    url += getQueryParameter("play");
+    url += getQueryParameter("metaData");
+
+    console.log("Klaso Publish URL:", url);
+    iframe.src = url;
+
+    /* UI INJECTION – GOOGLE MEET STYLE */
+    iframe.onload = () => {
+      const doc = iframe.contentDocument;
+      if (!doc) return;
+
+      const style = doc.createElement("style");
+      style.innerHTML = `
+        body {
+          background: #202124 !important;
+          color: #ffffff !important;
+        }
+
+        button {
+          border-radius: 999px !important;
+          padding: 10px 22px !important;
+          font-weight: 500 !important;
+          transition: all .2s ease !important;
+        }
+
+        button:hover {
+          transform: scale(1.05);
+        }
+
+        .btn-primary {
+          background: #1a73e8 !important;
+          border: none !important;
+        }
+
+        .btn-danger {
+          background: #ea4335 !important;
+          border: none !important;
+        }
+
+        .badge-success {
+          background: #34a853 !important;
+        }
+
+        .card,
+        .container,
+        .row {
+          background: transparent !important;
+          box-shadow: none !important;
+        }
+
+        video {
+          border-radius: 12px !important;
+          box-shadow: 0 10px 30px rgba(0,0,0,.6) !important;
+        }
+      `;
+      doc.head.appendChild(style);
+    };
+  </script>
+
+</body>
+</html>
