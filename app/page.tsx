@@ -30,10 +30,9 @@ export default function HomePage() {
       // Extract streamId
       const streamId = broadcast.streamId;
 
-      // Redirect to existing Ant Media publish page
-      // This page handles all WebRTC logic - we don't touch it
-      const publishUrl = getPublishUrl(streamId, appName, streamName.trim());
-      window.location.href = publishUrl;
+      // Redirect to Next.js publish wrapper page (which embeds Ant Media publish page)
+      // This allows us to add a watch button after publishing starts
+      router.push(`/publish/${streamId}?app=${appName}&name=${encodeURIComponent(streamName.trim())}`);
     } catch (err: any) {
       console.error('Error starting live stream:', err);
       setError(err.message || 'Failed to start live stream. Please try again.');
@@ -138,13 +137,20 @@ export default function HomePage() {
           </motion.div>
         )}
 
-        {/* Watch Stream Link */}
+        {/* Navigation Links */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="mt-6 text-center"
+          className="mt-6 flex flex-col gap-3"
         >
+          <button
+            onClick={() => router.push('/streams')}
+            className="w-full px-4 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+          >
+            <Video size={18} />
+            Manage Streams
+          </button>
           <button
             onClick={() => router.push('/watch')}
             className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors"
